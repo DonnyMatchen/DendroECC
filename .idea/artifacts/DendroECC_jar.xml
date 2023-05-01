@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="DendroECC:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/DendroECC_jar</output-path>
+    <root id="archive" name="DendroECC.jar">
+      <element id="module-output" name="DendroECC" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../LIBRARIES/DendroRoot-v1.0.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
