@@ -6,7 +6,6 @@ import com.donny.dendroecc.points.PointPackingHandler;
 import com.donny.dendroecc.util.Functions;
 
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -44,13 +43,13 @@ public class DefinedCurve<C extends Curve, P extends ECPoint<P, C>> {
      * @return the bit-limited hash of <code>message</code>
      * @throws NoSuchAlgorithmException if your JVM doesn't support SHA-256; this should not be the case
      */
-    private BigInteger getLimitedHash(String message) throws NoSuchAlgorithmException {
+    private BigInteger getLimitedHash(byte[] message) throws NoSuchAlgorithmException {
         MessageDigest sha = MessageDigest.getInstance("SHA-256");
-        byte[] hash = sha.digest(message.getBytes(StandardCharsets.UTF_8));
+        byte[] hash = sha.digest(message);
         int bits = Functions.bitCount(N);
         BigInteger z_c = new BigInteger(hash);
         BigInteger z;
-        if (z_c.toString(2).length() > bits) {
+        if (Functions.bitCount(z_c) > bits) {
             z = new BigInteger(z_c.toString(2).substring(0, bits), 2);
         } else {
             z = z_c;
@@ -66,7 +65,7 @@ public class DefinedCurve<C extends Curve, P extends ECPoint<P, C>> {
      * @return the signature of <code>message</code>
      * @throws NoSuchAlgorithmException if your JVM doesn't support SHA-256; this should not be the case
      */
-    public Signature sign(String message, BigInteger privateKey) throws NoSuchAlgorithmException {
+    public Signature sign(byte[] message, BigInteger privateKey) throws NoSuchAlgorithmException {
         BigInteger z = getLimitedHash(message);
         while (true) {
             BigInteger k = Functions.randBeneath(N);
@@ -94,7 +93,7 @@ public class DefinedCurve<C extends Curve, P extends ECPoint<P, C>> {
      * @return true if the signature verifies, false otherwise
      * @throws NoSuchAlgorithmException if your JVM doesn't support SHA-256; this should not be the case
      */
-    public boolean verifySignature(String message, Signature sig, P publicKey) throws NoSuchAlgorithmException {
+    public boolean verifySignature(byte[] message, Signature sig, P publicKey) throws NoSuchAlgorithmException {
         if (!publicKey.validate()) {
             return false;
         }
